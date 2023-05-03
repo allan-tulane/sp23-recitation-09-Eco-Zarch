@@ -12,8 +12,15 @@ def shortest_shortest_path(graph, source):
       a dict where each key is a vertex and the value is a tuple of
       (shortest path weight, shortest path number of edges). See test case for example.
     """
-    ### TODO
-    pass
+    queue = [(0, 0, source)]
+    result = {}
+    while queue:
+        total_weight, num_edges, vertex = heappop(queue)
+        if vertex not in result:
+            result[vertex] = (total_weight, num_edges)
+            for neighbor, weight in graph[vertex]:
+                heappush(queue, (total_weight + weight, num_edges + 1, neighbor))
+    return result
     
 def test_shortest_shortest_path():
 
@@ -40,8 +47,15 @@ def bfs_path(graph, source):
       a dict where each key is a vertex and the value is the parent of 
       that vertex in the shortest path tree.
     """
-    ###TODO
-    pass
+    queue = deque([source])
+    parents = {source: None}
+    while queue:
+        vertex = queue.popleft()
+        for neighbor in graph[vertex]:
+            if neighbor not in parents:
+                parents[neighbor] = vertex
+                queue.append(neighbor)
+    return parents
 
 def get_sample_graph():
      return {'s': {'a', 'b'},
@@ -65,10 +79,19 @@ def get_path(parents, destination):
       The shortest path from the source node to this destination node 
       (excluding the destination node itself). See test_get_path for an example.
     """
-    ###TODO
-    pass
+    path = []
+    node = destination
+    while parents[node] is not None:
+        path.append(parents[node])
+        node = parents[node]
+    return ''.join(reversed(path))
 
 def test_get_path():
     graph = get_sample_graph()
     parents = bfs_path(graph, 's')
     assert get_path(parents, 'd') == 'sbc'
+
+
+test_shortest_shortest_path()
+test_bfs_path()
+test_get_path()
